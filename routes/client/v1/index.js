@@ -11,7 +11,7 @@ router.use(require('./NotificationRoutes'));
 router.use(require('./RdvRoutes'));
 router.use(require('./FonctionRoutes'));
 router.use(require('./HistoriqueRoutes'));
-router.use(require('./SectionDRHRoutes'));
+router.use(require('./ServiceDRHRoutes'));
 router.use(require('./DirectionDRHRoutes'));
 router.use(require('./AgentDRHRoutes'));
 router.use(require('./SectionAppRoutes'));

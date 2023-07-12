@@ -16,7 +16,6 @@ let DirectionDRH = sequelize.define('DirectionDRH',{
   },
   directionDRH_code:{ type:DataTypes.STRING },
   directionDRH_libelle:{ type:DataTypes.STRING },
-  directionDRH_statut:{ type:DataTypes.INTEGER },
   isDeleted:{ type:DataTypes.BOOLEAN },
   isActive:{ type:DataTypes.BOOLEAN },
   createdAt:{ type:DataTypes.DATE },

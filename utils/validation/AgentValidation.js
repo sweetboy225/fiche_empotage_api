@@ -17,9 +17,9 @@ exports.schemaKeys = joi.object({
   agent_email: joi.string().allow(null).allow(''),
   agent_password: joi.string().allow(null).allow(''),
   agent_status: joi.boolean(),
-  agent_fonction: joi.number().integer().allow(0),
+  agent_fonctionId: joi.number().integer().allow(0),
   agent_otp: joi.string().allow(null).allow(''),
-  section_id: joi.number().integer().allow(0),
+  agent_sectionId: joi.number().integer().allow(0),
   isDeleted: joi.boolean(),
   isActive: joi.boolean()
 }).unknown(true);
@@ -33,9 +33,9 @@ exports.updateSchemaKeys = joi.object({
   agent_email: joi.string().allow(null).allow(''),
   agent_password: joi.string().allow(null).allow(''),
   agent_status: joi.boolean(),
-  agent_fonction: joi.number().integer().allow(0),
+  agent_fonctionId: joi.number().integer().allow(0),
   agent_otp: joi.string().allow(null).allow(''),
-  section_id: joi.number().integer().allow(0),
+  agent_sectionId: joi.number().integer().allow(0),
   isDeleted: joi.boolean(),
   isActive: joi.boolean(),
   id: joi.number().integer()
@@ -54,9 +54,9 @@ exports.findFilterKeys = joi.object({
       agent_email: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       agent_password: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       agent_status: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
-      agent_fonction: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
+      agent_fonctionId: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       agent_otp: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
-      section_id: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
+      agent_sectionId: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       isDeleted: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       isActive: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       id: joi.any()

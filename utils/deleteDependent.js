@@ -9,7 +9,7 @@ let Notification = require('../model/Notification');
 let Rdv = require('../model/Rdv');
 let Fonction = require('../model/Fonction');
 let Historique = require('../model/Historique');
-let SectionDRH = require('../model/SectionDRH');
+let ServiceDRH = require('../model/ServiceDRH');
 let DirectionDRH = require('../model/DirectionDRH');
 let AgentDRH = require('../model/AgentDRH');
 let SectionApp = require('../model/SectionApp');
@@ -92,9 +92,9 @@ const deleteHistorique = async (filter) =>{
   }
 };
 
-const deleteSectionDRH = async (filter) =>{
+const deleteServiceDRH = async (filter) =>{
   try {
-    let response  = await dbService.destroy(SectionDRH,filter);
+    let response  = await dbService.destroy(ServiceDRH,filter);
     return response;
   } catch (error){
     throw new Error(error.message);
@@ -287,8 +287,8 @@ const deleteUser = async (filter) =>{
       const HistoriqueFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
       const HistoriqueCnt = await dbService.destroy(Historique,HistoriqueFilter);
 
-      const SectionDRHFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
-      const SectionDRHCnt = await dbService.destroy(SectionDRH,SectionDRHFilter);
+      const ServiceDRHFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
+      const ServiceDRHCnt = await dbService.destroy(ServiceDRH,ServiceDRHFilter);
 
       const DirectionDRHFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
       const DirectionDRHCnt = await dbService.destroy(DirectionDRH,DirectionDRHFilter);
@@ -364,7 +364,7 @@ const deleteUser = async (filter) =>{
         Rdv :RdvCnt.length,
         Fonction :FonctionCnt.length,
         Historique :HistoriqueCnt.length,
-        SectionDRH :SectionDRHCnt.length,
+        ServiceDRH :ServiceDRHCnt.length,
         DirectionDRH :DirectionDRHCnt.length,
         AgentDRH :AgentDRHCnt.length,
         SectionApp :SectionAppCnt.length,
@@ -545,10 +545,10 @@ const countHistorique = async (filter) =>{
   }
 };
 
-const countSectionDRH = async (filter) =>{
+const countServiceDRH = async (filter) =>{
   try {
-    const SectionDRHCnt =  await dbService.count(SectionDRH,filter);
-    return { SectionDRH : SectionDRHCnt };
+    const ServiceDRHCnt =  await dbService.count(ServiceDRH,filter);
+    return { ServiceDRH : ServiceDRHCnt };
   } catch (error){
     throw new Error(error.message);
   }
@@ -740,8 +740,8 @@ const countUser = async (filter) =>{
       const HistoriqueFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
       const HistoriqueCnt =  await dbService.count(Historique,HistoriqueFilter);
 
-      const SectionDRHFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
-      const SectionDRHCnt =  await dbService.count(SectionDRH,SectionDRHFilter);
+      const ServiceDRHFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
+      const ServiceDRHCnt =  await dbService.count(ServiceDRH,ServiceDRHFilter);
 
       const DirectionDRHFilter = { $or: [{ addedBy : { $in : user } },{ updatedBy : { $in : user } }] };
       const DirectionDRHCnt =  await dbService.count(DirectionDRH,DirectionDRHFilter);
@@ -816,7 +816,7 @@ const countUser = async (filter) =>{
         Rdv : RdvCnt,
         Fonction : FonctionCnt,
         Historique : HistoriqueCnt,
-        SectionDRH : SectionDRHCnt,
+        ServiceDRH : ServiceDRHCnt,
         DirectionDRH : DirectionDRHCnt,
         AgentDRH : AgentDRHCnt,
         SectionApp : SectionAppCnt,
@@ -992,10 +992,10 @@ const softDeleteHistorique = async (filter,updateBody) =>{
   }
 };
 
-const softDeleteSectionDRH = async (filter,updateBody) =>{  
+const softDeleteServiceDRH = async (filter,updateBody) =>{  
   try {
-    const SectionDRHCnt =  await dbService.update(SectionDRH,filter);
-    return { SectionDRH : SectionDRHCnt };
+    const ServiceDRHCnt =  await dbService.update(ServiceDRH,filter);
+    return { ServiceDRH : ServiceDRHCnt };
   } catch (error){
     throw new Error(error.message);
   }
@@ -1187,8 +1187,8 @@ const softDeleteUser = async (filter,updateBody) =>{
       const HistoriqueFilter = { '$or': [{ addedBy : { '$in' : user } },{ updatedBy : { '$in' : user } }] };
       const HistoriqueCnt = await dbService.update(Historique,HistoriqueFilter,updateBody);
 
-      const SectionDRHFilter = { '$or': [{ addedBy : { '$in' : user } },{ updatedBy : { '$in' : user } }] };
-      const SectionDRHCnt = await dbService.update(SectionDRH,SectionDRHFilter,updateBody);
+      const ServiceDRHFilter = { '$or': [{ addedBy : { '$in' : user } },{ updatedBy : { '$in' : user } }] };
+      const ServiceDRHCnt = await dbService.update(ServiceDRH,ServiceDRHFilter,updateBody);
 
       const DirectionDRHFilter = { '$or': [{ addedBy : { '$in' : user } },{ updatedBy : { '$in' : user } }] };
       const DirectionDRHCnt = await dbService.update(DirectionDRH,DirectionDRHFilter,updateBody);
@@ -1264,7 +1264,7 @@ const softDeleteUser = async (filter,updateBody) =>{
         Rdv :RdvCnt.length,
         Fonction :FonctionCnt.length,
         Historique :HistoriqueCnt.length,
-        SectionDRH :SectionDRHCnt.length,
+        ServiceDRH :ServiceDRHCnt.length,
         DirectionDRH :DirectionDRHCnt.length,
         AgentDRH :AgentDRHCnt.length,
         SectionApp :SectionAppCnt.length,
@@ -1395,7 +1395,7 @@ module.exports = {
   deleteRdv,
   deleteFonction,
   deleteHistorique,
-  deleteSectionDRH,
+  deleteServiceDRH,
   deleteDirectionDRH,
   deleteAgentDRH,
   deleteSectionApp,
@@ -1428,7 +1428,7 @@ module.exports = {
   countRdv,
   countFonction,
   countHistorique,
-  countSectionDRH,
+  countServiceDRH,
   countDirectionDRH,
   countAgentDRH,
   countSectionApp,
@@ -1461,7 +1461,7 @@ module.exports = {
   softDeleteRdv,
   softDeleteFonction,
   softDeleteHistorique,
-  softDeleteSectionDRH,
+  softDeleteServiceDRH,
   softDeleteDirectionDRH,
   softDeleteAgentDRH,
   softDeleteSectionApp,

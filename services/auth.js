@@ -7,7 +7,7 @@ const model = require('../model/index');
 const dbService = require('../utils/dbService');
 const {
   JWT,LOGIN_ACCESS,
-  PLATFORM,MAX_LOGIN_RETRY_LIMIT,LOGIN_REACTIVE_TIME,DEFAULT_SEND_LOGIN_OTP,SEND_LOGIN_OTP,FORGOT_PASSWORD_WITH
+  PLATFORM,MAX_LOGIN_RETRY_LIMIT,LOGIN_REACTIVE_TIME,FORGOT_PASSWORD_WITH
 } = require('../constants/authConstant');
 const jwt = require('jsonwebtoken');
 const common = require('../utils/common');
@@ -29,43 +29,6 @@ const generateToken = async (user,secret) => {
     id:user.id,
     'username':user.username
   }, secret, { expiresIn: JWT.EXPIRES_IN * 60 });
-};
-
-/**
- * @description : service to send email containing OTP.
- * @param {obj} user : user document.
- * @return {boolean} : returns true if succeed otherwise false.
- */
-const sendEmailForLoginOtp = async (user) => {
-  try {
-    const where = { 
-      id:user.id,
-      isActive: true,
-      isDeleted: false,        
-    };
-    let otp = common.randomNumber();
-    let expires = dayjs();
-    expires = expires.add(6, 'hour').toISOString();
-    await dbService.update(model.userAuthSettings, { userId:user.id }, {
-      loginOTP: otp,
-      expiredTimeOfLoginOTP: expires
-    });
-    let updatedUser = await dbService.findOne(model.user,where);
-    
-    let mailObj = {
-      subject: 'Login OTP',
-      to: user.email,
-      template: '/views/email/OTP',
-      data:{
-        otp:otp,
-        userName:updatedUser.username,
-      }
-    };
-    await emailService.sendMail(mailObj);
-    return true;
-  } catch (error) {
-    return false;
-  }
 };
 
 /**
@@ -245,16 +208,12 @@ const sendResetPasswordNotification = async (user) => {
         expiredTimeOfResetPasswordCode: expires
       });
     if (FORGOT_PASSWORD_WITH.LINK.email){
-      let viewType = '/reset-password/';
+      let updatedUser = await dbService.findOne(model.user, where);
       let mailObj = {
         subject: 'Reset Password',
         to: user.email,
         template: '/views/email/ResetPassword',
-        data: {
-          userName: user.username || '-',
-          link: `http://localhost:${process.env.PORT}` + viewType + token,
-          linkText: 'Reset Password',
-        }
+        data:{ userName:updatedUser.username, }
       };
       try {
         await emailService.sendMail(mailObj);
@@ -377,107 +336,11 @@ const sendPasswordByEmail = async (user) => {
   }
 };
 
-/**
- * @description : service method to send OTP for login.
- * @param {string} username : username of user.
- * @return {obj}  : returns status whether OTP is sent or not. {flag, data}
- */
-const sendLoginOTP = async (username) => {
-  try {
-    let where = { $or:[{ username:username },{ email:username }] };
-    where.isActive = true;where.isDeleted = false;        let user = await dbService.findOne(model.user,where);
-    if (!user){
-      return {
-        flag:true,
-        data:'User not found'
-      };
-    }
-    let userAuth = await dbService.findOne(model.userAuthSettings, { userId: user.id });
-    if (userAuth && userAuth.loginRetryLimit >= MAX_LOGIN_RETRY_LIMIT) {
-      if (userAuth.loginReactiveTime) {
-        let now = dayjs();
-        let limitTime = dayjs(userAuth.loginReactiveTime);
-        if (limitTime > now) {
-          let expireTime = dayjs().add(LOGIN_REACTIVE_TIME, 'minute').toISOString();
-          await dbService.update(model.userAuthSettings, { userId:user.id }, {
-            loginReactiveTime: expireTime,
-            loginRetryLimit: userAuth.loginRetryLimit + 1
-          });
-          return {
-            flag: true,
-            data: `you have exceed the number of limit.you can login after ${LOGIN_REACTIVE_TIME} minutes.`
-          };
-        }
-      } else {
-        let expireTime = dayjs().add(LOGIN_REACTIVE_TIME, 'minute').toISOString();
-        await dbService.update(model.userAuthSettings, { userId:user.id }, {
-          loginReactiveTime: expireTime,
-          loginRetryLimit: userAuth.loginRetryLimit + 1
-        });
-        return {
-          flag: true,
-          data: `you have exceed the number of limit.you can login after ${LOGIN_REACTIVE_TIME} minutes.`
-        };
-      }
-    }
-    let res;
-    if (DEFAULT_SEND_LOGIN_OTP === SEND_LOGIN_OTP.EMAIL){
-      // send Email here
-      if (userAuth.loginReactiveTime) {
-        await dbService.update(model.userAuthSettings, { userId:user.id }, {
-          loginRetryLimit: 0,
-          loginReactiveTime: null 
-        });
-      }    
-      res = await sendEmailForLoginOtp(user);
-    } else if (DEFAULT_SEND_LOGIN_OTP === SEND_LOGIN_OTP.SMS){
-      // send SMS here
-    }
-    if (!res){
-      return {
-        flag:true,
-        data:'otp can not be sent due to some issue try again later.'
-      };    
-    }
-    return {
-      flag:false,
-      data:'Please check your email for OTP'
-    };
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-/**
- * @description : service to login with OTP.
- * @param {string} username : username of user.
- * @param {string} password : password of user.
- * @param {string} platform : platform.
- * @param {roleAccess} : a flag to request role access of user
- * @return {obj}  : returns authentication object {flag,status}.
- */
-const loginWithOTP = async (username,password, platform,roleAccess) => {
-  try {
-    let result = await loginUser(username,password, platform,roleAccess);
-    if (!result.flag) {
-      await dbService.update(model.userAuthSettings, { userId:result.data.id }, {
-        loginOTP: '',
-        expiredTimeOfLoginOTP: null 
-      });
-    }
-    return result;
-        
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 module.exports = {
   loginUser,
   changePassword,
   sendResetPasswordNotification,
   resetPassword,
   sendPasswordBySMS,
-  sendPasswordByEmail,
-  sendLoginOTP,
-  loginWithOTP
+  sendPasswordByEmail
 };

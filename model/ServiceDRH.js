@@ -1,6 +1,6 @@
 /**
- * SectionDRH.js
- * @description :: sequelize model of database table SectionDRH
+ * ServiceDRH.js
+ * @description :: sequelize model of database table ServiceDRH
  */
 
 const { DataTypes } = require('sequelize');
@@ -8,15 +8,15 @@ const sequelize = require('../config/dbConnection');
 const sequelizePaginate = require('sequelize-paginate');
 const sequelizeTransforms = require('sequelize-transforms');
 const { convertObjectToEnum } = require('../utils/common');
-let SectionDRH = sequelize.define('SectionDRH',{
+let ServiceDRH = sequelize.define('ServiceDRH',{
   id:{
     type:DataTypes.INTEGER,
     primaryKey:true,
     autoIncrement:true
   },
+  sectionDRH_code:{ type:DataTypes.STRING },
   sectionDRH_libelle:{ type:DataTypes.STRING },
-  sectionDRH_statut:{ type:DataTypes.STRING },
-  directionDRH_id:{ type:DataTypes.INTEGER },
+  directionDRH_code:{ type:DataTypes.STRING },
   isDeleted:{ type:DataTypes.BOOLEAN },
   isActive:{ type:DataTypes.BOOLEAN },
   createdAt:{ type:DataTypes.DATE },
@@ -27,18 +27,18 @@ let SectionDRH = sequelize.define('SectionDRH',{
 ,{
   hooks:{
     beforeCreate: [
-      async function (SectionDRH,options){
-        SectionDRH.isActive = true;
-        SectionDRH.isDeleted = false;
+      async function (ServiceDRH,options){
+        ServiceDRH.isActive = true;
+        ServiceDRH.isDeleted = false;
 
       },
     ],
     beforeBulkCreate: [
-      async function (SectionDRH,options){
-        if (SectionDRH !== undefined && SectionDRH.length) { 
-          for (let index = 0; index < SectionDRH.length; index++) { 
+      async function (ServiceDRH,options){
+        if (ServiceDRH !== undefined && ServiceDRH.length) { 
+          for (let index = 0; index < ServiceDRH.length; index++) { 
         
-            const element = SectionDRH[index]; 
+            const element = ServiceDRH[index]; 
             element.isActive = true; 
             element.isDeleted = false; 
   
@@ -49,10 +49,10 @@ let SectionDRH = sequelize.define('SectionDRH',{
   }
 }
 );
-SectionDRH.prototype.toJSON = function () {
+ServiceDRH.prototype.toJSON = function () {
   let values = Object.assign({}, this.get());
   return values;
 };
-sequelizeTransforms(SectionDRH);
-sequelizePaginate.paginate(SectionDRH);
-module.exports = SectionDRH;
+sequelizeTransforms(ServiceDRH);
+sequelizePaginate.paginate(ServiceDRH);
+module.exports = ServiceDRH;

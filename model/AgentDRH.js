@@ -14,9 +14,10 @@ let AgentDRH = sequelize.define('AgentDRH',{
     primaryKey:true,
     autoIncrement:true
   },
+  agentDRH_matricule:{ type:DataTypes.STRING },
+  serviceDRH_code:{ type:DataTypes.STRING },
   agentDRH_nom:{ type:DataTypes.STRING },
   agentDRH_prenoms:{ type:DataTypes.STRING },
-  sectionDRH_id:{ type:DataTypes.INTEGER },
   isDeleted:{ type:DataTypes.BOOLEAN },
   isActive:{ type:DataTypes.BOOLEAN },
   createdAt:{ type:DataTypes.DATE },

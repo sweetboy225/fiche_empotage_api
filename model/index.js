@@ -13,7 +13,7 @@ db.Notification = require('./Notification');
 db.Rdv = require('./Rdv');
 db.Fonction = require('./Fonction');
 db.Historique = require('./Historique');
-db.SectionDRH = require('./SectionDRH');
+db.ServiceDRH = require('./ServiceDRH');
 db.DirectionDRH = require('./DirectionDRH');
 db.AgentDRH = require('./AgentDRH');
 db.SectionApp = require('./SectionApp');
@@ -149,21 +149,21 @@ db.user.hasMany(db.Historique, {
   foreignKey: 'updatedBy',
   sourceKey: 'id' 
 });
-db.SectionDRH.belongsTo(db.user, {
+db.ServiceDRH.belongsTo(db.user, {
   foreignKey: 'addedBy',
   as: '_addedBy',
   targetKey: 'id' 
 });
-db.user.hasMany(db.SectionDRH, {
+db.user.hasMany(db.ServiceDRH, {
   foreignKey: 'addedBy',
   sourceKey: 'id' 
 });
-db.SectionDRH.belongsTo(db.user, {
+db.ServiceDRH.belongsTo(db.user, {
   foreignKey: 'updatedBy',
   as: '_updatedBy',
   targetKey: 'id' 
 });
-db.user.hasMany(db.SectionDRH, {
+db.user.hasMany(db.ServiceDRH, {
   foreignKey: 'updatedBy',
   sourceKey: 'id' 
 });

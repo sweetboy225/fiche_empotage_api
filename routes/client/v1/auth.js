@@ -9,8 +9,10 @@ const authController =  require('../../../controller/client/v1/authController');
 const { PLATFORM } =  require('../../../constants/authConstant'); 
 const auth = require('../../../middleware/auth');
 router.route('/register').post(authController.register);
-router.post('/send_login_otp',authController.sendOtpForLogin);
-router.post('/login_with_otp',authController.loginWithOTP);
+router.post('/login',authController.login);
+router.route('/forgot-password').post(authController.forgotPassword);
+router.route('/validate-otp').post(authController.validateResetPasswordOtp);
+router.route('/reset-password').put(authController.resetPassword);
 router.route('/logout').post(auth(PLATFORM.CLIENT), authController.logout);
 
 module.exports = router;
