@@ -12,7 +12,7 @@ const {
 exports.schemaKeys = joi.object({
   direction_code: joi.string().allow(null).allow(''),
   direction_libelle: joi.string().allow(null).allow(''),
-  direction_statut: joi.string().allow(null).allow(''),
+  direction_statut: joi.boolean(),
   isDeleted: joi.boolean(),
   isActive: joi.boolean()
 }).unknown(true);
@@ -21,7 +21,7 @@ exports.schemaKeys = joi.object({
 exports.updateSchemaKeys = joi.object({
   direction_code: joi.string().allow(null).allow(''),
   direction_libelle: joi.string().allow(null).allow(''),
-  direction_statut: joi.string().allow(null).allow(''),
+  direction_statut: joi.boolean(),
   isDeleted: joi.boolean(),
   isActive: joi.boolean(),
   id: joi.number().integer()
@@ -35,7 +35,7 @@ exports.findFilterKeys = joi.object({
     keys.map(key => [key, joi.object({
       direction_code: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       direction_libelle: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
-      direction_statut: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
+      direction_statut: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       isDeleted: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       isActive: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       id: joi.any()

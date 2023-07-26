@@ -1,5 +1,5 @@
 {
-  "id": "dbcd9c5c-a0a0-452b-b26c-4b7596aeec54",
+  "id": "b9dbdd2b-6bf2-4522-8cda-174bdeeac4cd",
   "name": "fiche_empotage_api_environment",
   "values": [
     {
@@ -14,6 +14,6 @@
     }
   ],
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2023-07-12T08:54:37.072Z",
+  "_postman_exported_at": "2023-07-25T17:53:35.191Z",
   "_postman_exported_using": "Postman"
 }

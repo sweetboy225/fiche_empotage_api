@@ -16,7 +16,7 @@ let DirectionApp = sequelize.define('DirectionApp',{
   },
   direction_code:{ type:DataTypes.STRING },
   direction_libelle:{ type:DataTypes.STRING },
-  direction_statut:{ type:DataTypes.STRING },
+  direction_statut:{ type:DataTypes.BOOLEAN },
   isDeleted:{ type:DataTypes.BOOLEAN },
   isActive:{ type:DataTypes.BOOLEAN },
   createdAt:{ type:DataTypes.DATE },
