@@ -25,8 +25,6 @@ const addNotification = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdNotification = await dbService.createOne(Notification,dataToCreate);
     return  res.success({ data :createdNotification });
@@ -45,12 +43,6 @@ const bulkInsertNotification = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdNotification = await dbService.createMany(Notification,dataToCreate); 
       return  res.success({ data :{ count :createdNotification.length || 0 } });       
     }
@@ -165,11 +157,9 @@ const updateNotification = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       NotificationSchemaKey.schemaKeys
@@ -196,10 +186,7 @@ const bulkUpdateNotification = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedNotification = await dbService.update(Notification,filter,dataToUpdate);
     if (!updatedNotification){
@@ -220,8 +207,6 @@ const bulkUpdateNotification = async (req, res)=>{
 const partialUpdateNotification = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       NotificationSchemaKey.updateSchemaKeys
@@ -249,10 +234,7 @@ const partialUpdateNotification = async (req, res) => {
 const softDeleteNotification = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(Notification, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +290,7 @@ const softDeleteManyNotification = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedNotification = await dbService.update(Notification,query,updateBody, options);
     if (!updatedNotification) {

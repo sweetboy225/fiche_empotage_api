@@ -25,8 +25,6 @@ const addRectif = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdRectif = await dbService.createOne(Rectif,dataToCreate);
     return  res.success({ data :createdRectif });
@@ -45,12 +43,6 @@ const bulkInsertRectif = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdRectif = await dbService.createMany(Rectif,dataToCreate); 
       return  res.success({ data :{ count :createdRectif.length || 0 } });       
     }
@@ -165,11 +157,9 @@ const updateRectif = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       RectifSchemaKey.schemaKeys
@@ -196,10 +186,7 @@ const bulkUpdateRectif = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedRectif = await dbService.update(Rectif,filter,dataToUpdate);
     if (!updatedRectif){
@@ -220,8 +207,6 @@ const bulkUpdateRectif = async (req, res)=>{
 const partialUpdateRectif = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       RectifSchemaKey.updateSchemaKeys
@@ -249,10 +234,7 @@ const partialUpdateRectif = async (req, res) => {
 const softDeleteRectif = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(Rectif, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +290,7 @@ const softDeleteManyRectif = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedRectif = await dbService.update(Rectif,query,updateBody, options);
     if (!updatedRectif) {

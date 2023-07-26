@@ -25,8 +25,6 @@ const addOperateurCDA = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdOperateurCDA = await dbService.createOne(OperateurCDA,dataToCreate);
     return  res.success({ data :createdOperateurCDA });
@@ -45,12 +43,6 @@ const bulkInsertOperateurCDA = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdOperateurCDA = await dbService.createMany(OperateurCDA,dataToCreate); 
       return  res.success({ data :{ count :createdOperateurCDA.length || 0 } });       
     }
@@ -165,11 +157,9 @@ const updateOperateurCDA = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       OperateurCDASchemaKey.schemaKeys
@@ -196,10 +186,7 @@ const bulkUpdateOperateurCDA = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedOperateurCDA = await dbService.update(OperateurCDA,filter,dataToUpdate);
     if (!updatedOperateurCDA){
@@ -220,8 +207,6 @@ const bulkUpdateOperateurCDA = async (req, res)=>{
 const partialUpdateOperateurCDA = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       OperateurCDASchemaKey.updateSchemaKeys
@@ -249,10 +234,7 @@ const partialUpdateOperateurCDA = async (req, res) => {
 const softDeleteOperateurCDA = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(OperateurCDA, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +290,7 @@ const softDeleteManyOperateurCDA = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedOperateurCDA = await dbService.update(OperateurCDA,query,updateBody, options);
     if (!updatedOperateurCDA) {

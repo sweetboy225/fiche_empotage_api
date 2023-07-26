@@ -25,8 +25,6 @@ const addRoleDouane = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdRoleDouane = await dbService.createOne(RoleDouane,dataToCreate);
     return  res.success({ data :createdRoleDouane });
@@ -45,12 +43,6 @@ const bulkInsertRoleDouane = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdRoleDouane = await dbService.createMany(RoleDouane,dataToCreate); 
       return  res.success({ data :{ count :createdRoleDouane.length || 0 } });       
     }
@@ -165,11 +157,9 @@ const updateRoleDouane = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       RoleDouaneSchemaKey.schemaKeys
@@ -196,10 +186,7 @@ const bulkUpdateRoleDouane = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedRoleDouane = await dbService.update(RoleDouane,filter,dataToUpdate);
     if (!updatedRoleDouane){
@@ -220,8 +207,6 @@ const bulkUpdateRoleDouane = async (req, res)=>{
 const partialUpdateRoleDouane = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       RoleDouaneSchemaKey.updateSchemaKeys
@@ -249,10 +234,7 @@ const partialUpdateRoleDouane = async (req, res) => {
 const softDeleteRoleDouane = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(RoleDouane, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +290,7 @@ const softDeleteManyRoleDouane = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedRoleDouane = await dbService.update(RoleDouane,query,updateBody, options);
     if (!updatedRoleDouane) {

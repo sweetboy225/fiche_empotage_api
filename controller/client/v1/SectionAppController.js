@@ -25,8 +25,6 @@ const addSectionApp = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdSectionApp = await dbService.createOne(SectionApp,dataToCreate);
     return  res.success({ data :createdSectionApp });
@@ -45,12 +43,6 @@ const bulkInsertSectionApp = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdSectionApp = await dbService.createMany(SectionApp,dataToCreate); 
       return  res.success({ data :{ count :createdSectionApp.length || 0 } });       
     }
@@ -165,11 +157,9 @@ const updateSectionApp = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       SectionAppSchemaKey.schemaKeys
@@ -196,10 +186,7 @@ const bulkUpdateSectionApp = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedSectionApp = await dbService.update(SectionApp,filter,dataToUpdate);
     if (!updatedSectionApp){
@@ -220,8 +207,6 @@ const bulkUpdateSectionApp = async (req, res)=>{
 const partialUpdateSectionApp = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       SectionAppSchemaKey.updateSchemaKeys
@@ -249,10 +234,7 @@ const partialUpdateSectionApp = async (req, res) => {
 const softDeleteSectionApp = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(SectionApp, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +290,7 @@ const softDeleteManySectionApp = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedSectionApp = await dbService.update(SectionApp,query,updateBody, options);
     if (!updatedSectionApp) {

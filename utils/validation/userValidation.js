@@ -20,6 +20,8 @@ exports.schemaKeys = joi.object({
   userType: joi.number().integer().allow(0),
   isActive: joi.boolean(),
   isDeleted: joi.boolean(),
+  otp: joi.number().integer().allow(0),
+  optExpireTime: joi.date().options({ convert: true }).allow(null).allow(''),
   mobileNo: joi.string().allow(null).allow('')
 }).unknown(true);
 
@@ -32,6 +34,8 @@ exports.updateSchemaKeys = joi.object({
   userType: joi.number().integer().allow(0),
   isActive: joi.boolean(),
   isDeleted: joi.boolean(),
+  otp: joi.number().integer().allow(0),
+  optExpireTime: joi.date().options({ convert: true }).allow(null).allow(''),
   mobileNo: joi.string().allow(null).allow(''),
   id: joi.number().integer()
 }).unknown(true);
@@ -49,6 +53,8 @@ exports.findFilterKeys = joi.object({
       userType: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       isActive: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       isDeleted: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
+      otp: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
+      optExpireTime: joi.alternatives().try(joi.array().items(),joi.date().options({ convert: true }),joi.object()),
       mobileNo: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       id: joi.any()
     }).unknown(true),])

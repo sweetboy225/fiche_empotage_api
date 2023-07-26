@@ -8,6 +8,7 @@ const AgentDouaneEmailSchemaKey = require('../../../utils/validation/AgentDouane
 const validation = require('../../../utils/validateRequest');
 const dbService = require('../../../utils/dbService');
 const models = require('../../../model');
+const sequelize = require('sequelize');
 const utils = require('../../../utils/common');
 
 /**
@@ -25,8 +26,6 @@ const addAgentDouaneEmail = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdAgentDouaneEmail = await dbService.createOne(AgentDouaneEmail,dataToCreate);
     return  res.success({ data :createdAgentDouaneEmail });
@@ -45,12 +44,6 @@ const bulkInsertAgentDouaneEmail = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdAgentDouaneEmail = await dbService.createMany(AgentDouaneEmail,dataToCreate); 
       return  res.success({ data :{ count :createdAgentDouaneEmail.length || 0 } });       
     }
@@ -165,11 +158,9 @@ const updateAgentDouaneEmail = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       AgentDouaneEmailSchemaKey.schemaKeys
@@ -196,10 +187,7 @@ const bulkUpdateAgentDouaneEmail = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedAgentDouaneEmail = await dbService.update(AgentDouaneEmail,filter,dataToUpdate);
     if (!updatedAgentDouaneEmail){
@@ -220,8 +208,6 @@ const bulkUpdateAgentDouaneEmail = async (req, res)=>{
 const partialUpdateAgentDouaneEmail = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       AgentDouaneEmailSchemaKey.updateSchemaKeys
@@ -249,10 +235,7 @@ const partialUpdateAgentDouaneEmail = async (req, res) => {
 const softDeleteAgentDouaneEmail = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(AgentDouaneEmail, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +291,7 @@ const softDeleteManyAgentDouaneEmail = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedAgentDouaneEmail = await dbService.update(AgentDouaneEmail,query,updateBody, options);
     if (!updatedAgentDouaneEmail) {
@@ -322,6 +302,28 @@ const softDeleteManyAgentDouaneEmail = async (req, res) => {
     return res.internalServerError({ message:error.message });  
   }
 };
+
+/**
+ * @description : getAgentDouaneEmailByMatricule 
+ * @param {Object} req : request
+ * @param {Object} res : response 
+ * @return {Object} : response of getAgentDouaneEmailByMatricule {status, message, data}
+ */
+const getAgentDouaneEmailByMatricule = async (req, res)=>{
+  try {        let result = await dbService.findOne(AgentDouaneEmail,{ id :req.params.agentDouaneEmail_matricule });
+    if (result){ 
+      return res.success({ data :result });
+    }
+    return res.recordNotFound();
+  } 
+  catch (error){ 
+    return  res.status(500).send({
+      message: 'Internal Server Error',
+      data: null 
+    });
+  }
+
+};    
 
 module.exports = {
   addAgentDouaneEmail,
@@ -336,4 +338,5 @@ module.exports = {
   deleteAgentDouaneEmail,
   deleteManyAgentDouaneEmail,
   softDeleteManyAgentDouaneEmail,
+  getAgentDouaneEmailByMatricule,
 };

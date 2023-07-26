@@ -25,8 +25,6 @@ const addAgentDRH = async (req, res) => {
     if (!validateRequest.isValid) {
       return res.validationError({ message : `Invalid values in parameters, ${validateRequest.message}` });
     } 
-    dataToCreate.addedBy = req.user.id;
-    delete dataToCreate['updatedBy'];
         
     let createdAgentDRH = await dbService.createOne(AgentDRH,dataToCreate);
     return  res.success({ data :createdAgentDRH });
@@ -45,12 +43,6 @@ const bulkInsertAgentDRH = async (req, res)=>{
   try {
     let dataToCreate = req.body.data;   
     if (dataToCreate !== undefined && dataToCreate.length){
-      dataToCreate = dataToCreate.map(item=>{
-        delete item.updatedBy;
-        item.addedBy = req.user.id;
-              
-        return item;
-      });
       let createdAgentDRH = await dbService.createMany(AgentDRH,dataToCreate); 
       return  res.success({ data :{ count :createdAgentDRH.length || 0 } });       
     }
@@ -165,11 +157,9 @@ const updateAgentDRH = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body || {} };
     let query = {};
-    delete dataToUpdate.addedBy;
     if (!req.params || !req.params.id) {
       return res.badRequest({ message : 'Insufficient request parameters! id is required.' });
     }          
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       AgentDRHSchemaKey.schemaKeys
@@ -196,10 +186,7 @@ const bulkUpdateAgentDRH = async (req, res)=>{
     let filter = req.body && req.body.filter ? { ...req.body.filter } : {};
     let dataToUpdate = {};
     if (req.body && typeof req.body.data === 'object' && req.body.data !== null) {
-      dataToUpdate = {
-        ...req.body.data,
-        updatedBy:req.user.id
-      };
+      dataToUpdate = {};
     }
     let updatedAgentDRH = await dbService.update(AgentDRH,filter,dataToUpdate);
     if (!updatedAgentDRH){
@@ -220,8 +207,6 @@ const bulkUpdateAgentDRH = async (req, res)=>{
 const partialUpdateAgentDRH = async (req, res) => {
   try {
     let dataToUpdate = { ...req.body, };
-    delete dataToUpdate.addedBy;
-    dataToUpdate.updatedBy = req.user.id;
     let validateRequest = validation.validateParamsWithJoi(
       dataToUpdate,
       AgentDRHSchemaKey.updateSchemaKeys
@@ -249,10 +234,7 @@ const partialUpdateAgentDRH = async (req, res) => {
 const softDeleteAgentDRH = async (req, res) => {
   try {
     query = { id:req.params.id };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id
-    };
+    const updateBody = { isDeleted: true, };
     let result = await dbService.update(AgentDRH, query,updateBody);
     if (!result){
       return res.recordNotFound();
@@ -308,10 +290,7 @@ const softDeleteManyAgentDRH = async (req, res) => {
       return res.badRequest({ message : 'Insufficient request parameters! ids is required.' });
     }
     const query = { id:{ $in:ids } };
-    const updateBody = {
-      isDeleted: true,
-      updatedBy: req.user.id,
-    };
+    const updateBody = { isDeleted: true, };
     const options = {};
     let updatedAgentDRH = await dbService.update(AgentDRH,query,updateBody, options);
     if (!updatedAgentDRH) {

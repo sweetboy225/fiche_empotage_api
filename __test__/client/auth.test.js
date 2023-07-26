@@ -30,12 +30,14 @@ describe('POST /register -> if email and username is given', () => {
     let registeredUser = await request(app)
       .post('/client/auth/register')
       .send({
-        'username':'Elnora.Hermann33',
-        'password':'YhdhgUzsKcWEsKV',
-        'email':'Alayna90@yahoo.com',
-        'name':'Kyle Kessler',
+        'username':'Louisa.Wiegand',
+        'password':'UQxANHLY6Puaq1z',
+        'email':'Dino_Ryan25@hotmail.com',
+        'name':'Dolores Baumbach',
         'userType':authConstant.USER_TYPES.Douanes,
-        'mobileNo':'(705) 702-2051'
+        'otp':911,
+        'optExpireTime':'2023-10-21T22:22:49.461Z',
+        'mobileNo':'(535) 558-3980'
       });
     expect(registeredUser.headers['content-type']).toEqual('application/json; charset=utf-8');
     expect(registeredUser.body.status).toBe('SUCCESS');
@@ -50,8 +52,8 @@ describe('POST /login -> if username and password is correct', () => {
       .post('/client/auth/login')
       .send(
         {
-          username: 'Elnora.Hermann33',
-          password: 'YhdhgUzsKcWEsKV'
+          username: 'Louisa.Wiegand',
+          password: 'UQxANHLY6Puaq1z'
         }
       );
     expect(user.statusCode).toBe(200);
@@ -70,7 +72,7 @@ describe('POST /login -> if username is incorrect', () => {
       .send(
         {
           username: 'wrong.username',
-          password: 'YhdhgUzsKcWEsKV'
+          password: 'UQxANHLY6Puaq1z'
         }
       );
 
@@ -85,7 +87,7 @@ describe('POST /login -> if password is incorrect', () => {
       .post('/client/auth/login')
       .send(
         {
-          username: 'Elnora.Hermann33',
+          username: 'Louisa.Wiegand',
           password: 'wrong@password'
         }
       );
@@ -132,7 +134,7 @@ describe('POST /forgot-password -> if email passed from request body is valid an
   test('should return success message', async () => {
     let user = await request(app)
       .post('/client/auth/forgot-password')
-      .send({ 'email':'Alayna90@yahoo.com', });
+      .send({ 'email':'Dino_Ryan25@hotmail.com', });
     
     expect(user.statusCode).toBe(200);
     expect(user.body.status).toBe('SUCCESS');
@@ -145,8 +147,8 @@ describe('POST /validate-otp -> otp is sent in request body and OTP is correct',
       .post('/client/auth/login')
       .send(
         {
-          username: 'Elnora.Hermann33',
-          password: 'YhdhgUzsKcWEsKV'
+          username: 'Louisa.Wiegand',
+          password: 'UQxANHLY6Puaq1z'
         }).then(login => () => {
         return request(app)
           .get(`/client/api/v1/user/${login.body.data.id}`)
@@ -192,8 +194,8 @@ describe('PUT /reset-password -> code is sent in request body and code is correc
       .post('/client/auth/login')
       .send(
         {
-          username: 'Elnora.Hermann33',
-          password: 'YhdhgUzsKcWEsKV'
+          username: 'Louisa.Wiegand',
+          password: 'UQxANHLY6Puaq1z'
         }).then(login => () => {
         return request(app)
           .get(`/client/api/v1/user/${login.body.data.id}`)

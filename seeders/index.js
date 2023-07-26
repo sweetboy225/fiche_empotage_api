@@ -3775,6 +3775,11 @@ async function seedRouteRole () {
         role: 'System_User',
         method: 'POST'
       },
+      {
+        route: '/client/api/v1/agentdouaneemail/:agentdouaneemail_matricule',
+        role: 'System_User',
+        method: 'GET'
+      },
 
     ];
     if (routeRoles && routeRoles.length) {
