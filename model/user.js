@@ -16,10 +16,8 @@ let User = sequelize.define('user',{
     autoIncrement:true,
     unique:true
   },
-  username:{ type:DataTypes.STRING },
-  password:{ type:DataTypes.STRING },
-  email:{ type:DataTypes.STRING },
-  name:{ type:DataTypes.STRING },
+  user_password:{ type:DataTypes.STRING },
+  user_email:{ type:DataTypes.STRING },
   userType:{ type:DataTypes.INTEGER },
   isActive:{ type:DataTypes.BOOLEAN },
   isDeleted:{ type:DataTypes.BOOLEAN },
@@ -29,7 +27,10 @@ let User = sequelize.define('user',{
   updatedBy:{ type:DataTypes.INTEGER },
   otp:{ type:DataTypes.INTEGER },
   optExpireTime:{ type:DataTypes.DATE },
-  mobileNo:{ type:DataTypes.STRING }
+  email:{ type:DataTypes.STRING },
+  mobileNo:{ type:DataTypes.STRING },
+  password:{ type:DataTypes.STRING },
+  username:{ type:DataTypes.STRING }
 }
 ,{
   hooks:{

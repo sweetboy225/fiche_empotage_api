@@ -30,7 +30,7 @@ let OperateurCDA = sequelize.define('OperateurCDA',{
   updatedAt:{ type:DataTypes.DATE },
   addedBy:{ type:DataTypes.INTEGER },
   updatedBy:{ type:DataTypes.INTEGER },
-  userId:{ type:DataTypes.INTEGER }
+  user_id:{ type:DataTypes.INTEGER }
 }
 ,{
   hooks:{

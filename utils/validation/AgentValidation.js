@@ -17,11 +17,13 @@ exports.schemaKeys = joi.object({
   agent_email: joi.string().allow(null).allow(''),
   agent_password: joi.string().allow(null).allow(''),
   agent_status: joi.boolean(),
-  agent_fonctionId: joi.number().integer().allow(0),
+  fonction_code: joi.string().allow(null).allow(''),
   agent_otp: joi.string().allow(null).allow(''),
-  agent_sectionId: joi.number().integer().allow(0),
+  agent_otpExpiration: joi.date().options({ convert: true }).allow(null).allow(''),
+  section_code: joi.number().integer().allow(0),
   isDeleted: joi.boolean(),
-  isActive: joi.boolean()
+  isActive: joi.boolean(),
+  user_id: joi.number().integer().allow(0)
 }).unknown(true);
 
 /** validation keys and properties of Agent for updation */
@@ -33,11 +35,13 @@ exports.updateSchemaKeys = joi.object({
   agent_email: joi.string().allow(null).allow(''),
   agent_password: joi.string().allow(null).allow(''),
   agent_status: joi.boolean(),
-  agent_fonctionId: joi.number().integer().allow(0),
+  fonction_code: joi.string().allow(null).allow(''),
   agent_otp: joi.string().allow(null).allow(''),
-  agent_sectionId: joi.number().integer().allow(0),
+  agent_otpExpiration: joi.date().options({ convert: true }).allow(null).allow(''),
+  section_code: joi.number().integer().allow(0),
   isDeleted: joi.boolean(),
   isActive: joi.boolean(),
+  user_id: joi.number().integer().allow(0),
   id: joi.number().integer()
 }).unknown(true);
 
@@ -54,11 +58,13 @@ exports.findFilterKeys = joi.object({
       agent_email: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       agent_password: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       agent_status: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
-      agent_fonctionId: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
+      fonction_code: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
       agent_otp: joi.alternatives().try(joi.array().items(),joi.string(),joi.object()),
-      agent_sectionId: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
+      agent_otpExpiration: joi.alternatives().try(joi.array().items(),joi.date().options({ convert: true }),joi.object()),
+      section_code: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       isDeleted: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       isActive: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
+      user_id: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       id: joi.any()
     }).unknown(true),])
   ),

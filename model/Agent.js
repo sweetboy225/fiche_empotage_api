@@ -21,15 +21,17 @@ let Agent = sequelize.define('Agent',{
   agent_email:{ type:DataTypes.STRING },
   agent_password:{ type:DataTypes.STRING },
   agent_status:{ type:DataTypes.BOOLEAN },
-  agent_fonctionId:{ type:DataTypes.INTEGER },
+  fonction_code:{ type:DataTypes.STRING },
   agent_otp:{ type:DataTypes.STRING },
-  agent_sectionId:{ type:DataTypes.INTEGER },
+  agent_otpExpiration:{ type:DataTypes.DATE },
+  section_code:{ type:DataTypes.INTEGER },
   isDeleted:{ type:DataTypes.BOOLEAN },
   isActive:{ type:DataTypes.BOOLEAN },
   createdAt:{ type:DataTypes.DATE },
   updatedAt:{ type:DataTypes.DATE },
   addedBy:{ type:DataTypes.INTEGER },
-  updatedBy:{ type:DataTypes.INTEGER }
+  updatedBy:{ type:DataTypes.INTEGER },
+  user_id:{ type:DataTypes.INTEGER }
 }
 ,{
   hooks:{

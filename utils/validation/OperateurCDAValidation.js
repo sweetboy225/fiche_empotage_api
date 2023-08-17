@@ -22,7 +22,7 @@ exports.schemaKeys = joi.object({
   OperateurCDA_statut: joi.number().integer().allow(0),
   isDeleted: joi.boolean(),
   isActive: joi.boolean(),
-  userId: joi.number().integer().allow(0)
+  user_id: joi.number().integer().allow(0)
 }).unknown(true);
 
 /** validation keys and properties of OperateurCDA for updation */
@@ -39,7 +39,7 @@ exports.updateSchemaKeys = joi.object({
   OperateurCDA_statut: joi.number().integer().allow(0),
   isDeleted: joi.boolean(),
   isActive: joi.boolean(),
-  userId: joi.number().integer().allow(0),
+  user_id: joi.number().integer().allow(0),
   id: joi.number().integer()
 }).unknown(true);
 
@@ -61,7 +61,7 @@ exports.findFilterKeys = joi.object({
       OperateurCDA_statut: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       isDeleted: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
       isActive: joi.alternatives().try(joi.array().items(),joi.boolean(),joi.object()),
-      userId: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
+      user_id: joi.alternatives().try(joi.array().items(),joi.number().integer(),joi.object()),
       id: joi.any()
     }).unknown(true),])
   ),
